@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% set active_page = "menu1" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-1"><a href="../.."><img src="{{ url_for('static', filename='images/ic-back.png') }}"
+                style="width:50px;height:50px;"></a></div>
+    <div class="col-md-11 {{ info["result"] }}">
+        <h3>Bom<span class="lbstatus-md">{{ info['location'] }}</span>
+        </h3>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        Serial Number : {{ info["serial_number"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        TEST MODE : {{ info["test_mode"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        LOGOP : {{ info["logop"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        SCRIPT VERSION : {{ info["code_version"] if info["test_mode"] == "Production" }}
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-1"></div>
+    <h4 class="alert-heading">BOM : {{ info["serial_number"] }}.py</h4>
+    <div class="col-md-11">
+        <pre class="scrollbar2 only_sequence" style="white-space: pre-line; line-height: 1;">
+            {% for line in bom_values %}
+            <span>{{ line }}</span>
+            {% endfor %}
+        </pre>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.setInterval('refresh()', {{ info['interval']}} * 1000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+
+    // Refresh or reload page.
+    function refresh() {
+        if (!($('#batchModal').is(':visible') || $('#checkoutbatch').is(':visible'))) {
+            window.location.reload();
+        }
+    }
+</script>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+{% endblock %}

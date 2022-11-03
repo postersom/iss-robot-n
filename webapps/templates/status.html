@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% set active_page = "menu1" %}
+{% block title %}{{ block_title }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-1"><a href="/"><img src="{{ url_for('static', filename='images/ic-back.png') }}"
+                style="width:50px;height:50px;"></a></div>
+    <div class="col-md-11 {{ info["result"] }}">
+        <h3>Status<span class="lbstatus-md">{{ info['location'] }}</span>
+        </h3>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        Serial Number : {{ info["serial_number"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        TEST MODE : {{ info["test_mode"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        LOGOP : {{ info["logop"] }}
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        SCRIPT VERSION : {{ info["code_version"] if info["test_mode"] == "Production"  }}
+    </div>
+    {% if info["operation"] %}
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        OPERATION : {{ info["operation"] }}
+    </div>
+    {% endif %}
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        <a href="./bom/{{ info["serial_number"] }}"><button class="btn-primary">BOM file</button></a>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-11">
+        <table class="table table-striped">
+            <thead>
+                <tr calss="tb-header">
+                    <th>Test Case</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>Finished</th>
+                    <th>Run Time</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in statuses %}
+                <tr>
+                    {% if item.status|lower == "wait" %}
+                    <td>{{item.name}}</td>
+                    <td class="text-center"></td>
+                    {% else %}
+                    <td><a href="./view/{{ item.name }}">{{item.name}}</a></td>
+                    <td class="text-center {{item.status}}">
+                        <span class="lbstatus-sm">{{item.status}}</span>
+                    </td>
+                    {% endif %}
+                    <td class="text-center">{{item.started.strftime('%Y-%m-%d %H:%M:%S') if item.started }}</td>
+                    <td class="text-center">{{item.finished.strftime('%Y-%m-%d %H:%M:%S') if item.finished }}</td>
+                    <td class="text-center">{{item.elapsed_time}}</td>
+                    <td class="text-center">{{item.reason}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    window.setInterval('refresh()', {{ info['interval']}} * 1000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+
+    // Refresh or reload page.
+    function refresh() {
+        if (!($('#batchModal').is(':visible') || $('#checkoutbatch').is(':visible'))) {
+            window.location.reload();
+        }
+    }
+</script>
+
+{% endblock %}
+{% block footer %}
+{{ super() }}
+{% endblock %}
